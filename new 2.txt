@@ -1,0 +1,7 @@
+<html>
+<form action="http://35.240.62.111/black_inc/index.php" method="post" enctype="multipart/form-data">
+  Select image to upload:
+  <input type="file" name="fileToUpload" >
+  <input type="submit" name="submit">
+</form>
+</html>

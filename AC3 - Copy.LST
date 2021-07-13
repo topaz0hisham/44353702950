@@ -1,0 +1,328 @@
+██> Create user user1 identified by pass123;
+Create user user1 identified by pass123
+            *
+ERROR at line 1:
+ORA-01920: user name 'USER1' conflicts with another user or role name 
+
+
+██> Create user uuser1 identified by pass123;
+
+User created.
+
+██> Create user uuser2 identified by pass123;
+
+User created.
+
+██> Grant create session to uuser1;
+
+Grant succeeded.
+
+██> Grant create session to uuser2;
+
+Grant succeeded.
+
+██> Grant create table to uuser1;
+
+Grant succeeded.
+
+██> Grant create table to uuser2;
+
+Grant succeeded.
+
+██> conn uuser1
+Connected.
+██> show user
+USER is "UUSER1"
+██> create table Guest (Guest_no number(5)primary key, Guest_Name Varchar(20), date_checkin date, date_checkout date, room_no number(3))
+  2  
+██> create table Guest (Guest_no number(5)primary key, Guest_Name Varchar(20), date_checkin date, date_checkout date, room_no number(3));
+
+Table created.
+
+██> insert into Guset values (&Guest_no ,'&Guest_Name',&date_checkin ,&date_checkout,&room_no)
+  2  
+██> insert into Guset values (&Guest_no ,'&Guest_Name',&date_checkin ,&date_checkout,&room_no);
+Enter value for guest_no: 111
+Enter value for guest_name: ahmed
+Enter value for date_checkin: 32-mar-15
+Enter value for date_checkout: 25-mar-15
+Enter value for room_no: 110
+old   1: insert into Guset values (&Guest_no ,'&Guest_Name',&date_checkin ,&date_checkout,&room_no)
+new   1: insert into Guset values (111 ,'ahmed',32-mar-15 ,25-mar-15,110)
+insert into Guset values (111 ,'ahmed',32-mar-15 ,25-mar-15,110)
+            *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+██> insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no);
+Enter value for guest_no: 111
+Enter value for guest_name: ahmed
+Enter value for date_checkin: 23-mar-15
+Enter value for date_checkout: 25-mar-15
+Enter value for room_no: 110
+old   1: insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no)
+new   1: insert into Guest values (111 ,'ahmed','23-mar-15' ,'25-mar-15',110)
+insert into Guest values (111 ,'ahmed','23-mar-15' ,'25-mar-15',110)
+            *
+ERROR at line 1:
+ORA-01950: no privileges on tablespace 'USERS' 
+
+██> show user
+USER is "UUSER1"
+██> conn sys as sysdba
+Connected.
+██> alter user uuser1 default tablespace USERS quota 50M ON USERS;
+
+User altered.
+
+██> alter user uuser2 default tablespace USERS quota 50M ON USERS;
+
+User altered.
+
+██> conn uuser1
+Connected.
+██> insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no);
+Enter value for guest_no: 111
+Enter value for guest_name: ahmed
+Enter value for date_checkin: 23-mar-15
+Enter value for date_checkout: 25-mar-15
+Enter value for room_no: 110
+old   1: insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no)
+new   1: insert into Guest values (111 ,'ahmed','23-mar-15' ,'25-mar-15',110)
+
+1 row created.
+
+██> insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no);
+Enter value for guest_no: 222
+Enter value for guest_name: khalifa
+Enter value for date_checkin: 13-jan-15
+Enter value for date_checkout: 25-jan-15
+Enter value for room_no: 101
+old   1: insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no)
+new   1: insert into Guest values (222 ,'khalifa','13-jan-15' ,'25-jan-15',101)
+
+1 row created.
+
+██> insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no);
+Enter value for guest_no: 331
+Enter value for guest_name: zakariya
+Enter value for date_checkin: 20-apr-15
+Enter value for date_checkout: 25-apr-15
+Enter value for room_no: 100
+old   1: insert into Guest values (&Guest_no ,'&Guest_Name','&date_checkin' ,'&date_checkout',&room_no)
+new   1: insert into Guest values (331 ,'zakariya','20-apr-15' ,'25-apr-15',100)
+
+1 row created.
+
+██> Grant select,delete on uuser1.guest to scott,uuser2;
+
+Grant succeeded.
+
+██> conn uuser2
+Connected.
+██> show user
+USER is "UUSER2"
+██> Select * from  user1.guest;
+Select * from  user1.guest
+                     *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+██> Select * from  uuser1.Guest;
+
+  GUEST_NO GUEST_NAME           DATE_CHEC DATE_CHEC    ROOM_NO                  
+---------- -------------------- --------- --------- ----------                  
+       111 ahmed                23-MAR-15 25-MAR-15        110                  
+       222 khalifa              13-JAN-15 25-JAN-15        101                  
+       331 zakariya             20-APR-15 25-APR-15        100                  
+
+██> Delete uuser1.guest where guest_no=111;
+
+1 row deleted.
+
+██> Select * from  uuser1.Guest;
+
+  GUEST_NO GUEST_NAME           DATE_CHEC DATE_CHEC    ROOM_NO                  
+---------- -------------------- --------- --------- ----------                  
+       222 khalifa              13-JAN-15 25-JAN-15        101                  
+       331 zakariya             20-APR-15 25-APR-15        100                  
+
+██> conn scott
+Connected.
+██> show user
+USER is "SCOTT"
+██> Insert into uuser1.Guest values(111, `Ahmed','23-Mar-15', 25-Mar-15',110);
+Insert into uuser1.Guest values(111, `Ahmed','23-Mar-15', 25-Mar-15',110)
+                                     *
+ERROR at line 1:
+ORA-00911: invalid character 
+
+
+██> Insert into uuser1.Guest values(111, 'Ahmed','23-Mar-15','25-Mar-15',110);
+Insert into uuser1.Guest values(111, 'Ahmed','23-Mar-15','25-Mar-15',110)
+                   *
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+██> Select * from  uuser1.guest;
+
+  GUEST_NO GUEST_NAME           DATE_CHEC DATE_CHEC    ROOM_NO                  
+---------- -------------------- --------- --------- ----------                  
+       222 khalifa              13-JAN-15 25-JAN-15        101                  
+       331 zakariya             20-APR-15 25-APR-15        100                  
+
+██> Delete from uuser1.guest where guest_no=222;
+
+1 row deleted.
+
+██> Select * from  uuser1.guest;
+
+  GUEST_NO GUEST_NAME           DATE_CHEC DATE_CHEC    ROOM_NO                  
+---------- -------------------- --------- --------- ----------                  
+       331 zakariya             20-APR-15 25-APR-15        100                  
+
+██> conn sys as sysdba
+Connected.
+██> Create user muser identified by pass123;
+
+User created.
+
+██> Grant create session to muser;
+
+Grant succeeded.
+
+██> Grant select, delete on uuser1.guest  to uuser2 with grant option;
+
+Grant succeeded.
+
+██> conn uuser1
+Connected.
+██> Grant select, delete on uuser1.guest  to uuser2 with grant option;
+
+Grant succeeded.
+
+██> conn uuser2
+Connected.
+██> Delete  guest where guest_no=222;
+Delete  guest where guest_no=222
+        *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+██> Grant select,delete on uuser1.guest to muser;
+
+Grant succeeded.
+
+██> conn muser
+ERROR:
+ORA-01017: invalid username/password; logon denied 
+
+Warning: You are no longer connected to ORACLE.
+██> conn muser
+Connected.
+██> Select *  from uuser1.guest ;
+
+  GUEST_NO GUEST_NAME           DATE_CHEC DATE_CHEC    ROOM_NO                  
+---------- -------------------- --------- --------- ----------                  
+       331 zakariya             20-APR-15 25-APR-15        100                  
+
+██> conn sys as sysdba
+Connected.
+██> Create tablespace data_ts datafile `data_ts.mdf'  size 5M;
+Create tablespace data_ts datafile `data_ts.mdf'  size 5M
+                                   *
+ERROR at line 1:
+ORA-00911: invalid character 
+
+
+██> Create tablespace data_ts datafile 'data_ts.mdf'  size 5M;
+
+Tablespace created.
+
+██> Create tablespace tab1 datafile 'tab1.mdf'  size 5M;
+
+Tablespace created.
+
+██> Create tablespace test_ts datafile 'test_ts.mdf'  size 5M;
+
+Tablespace created.
+
+██> Create temporary tablespace temp_ts tempfile 'temp_ts.mdf'  size 5M;
+
+Tablespace created.
+
+██> Create temporary tablespace tem1 tempfile 'tem1.mdf'  size 5M;
+
+Tablespace created.
+ 
+██> Create user  usert identified by pass123 Default tablespace data_ts Quota 50M on tab1 Quota 50M on data_ts Temporary tablespace temp_ts;
+
+User created.
+
+██> CREATE USER jjward IDENTIFIED BY pass123 DEFAULT TABLESPACE data_ts QUOTA 100K ON test_ts QUOTA 500K ON data_ts TEMPORARY TABLESPACE temp_ts;
+
+User created.
+
+██> GRANT create session TO jjward;
+
+Grant succeeded.
+
+██> 
+██> Alter user jjward identified by pass123;
+
+User altered.
+
+██> 
+██> Alter user  jward identified by pass123 Default tablespace data_ts quota 10M on data_ts ;
+
+User altered.
+
+██> Grant Grant any privilege to uuser1;
+
+Grant succeeded.
+
+██> Grant Grant any privilege to muser;
+
+Grant succeeded.
+
+██> Create role manager identified by 123;
+
+Role created.
+
+██> Grant create session to manager;
+
+Grant succeeded.
+
+██> Grant select on Guest to manager;
+Grant select on Guest to manager
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+██> Grant select on Guset to manager;
+Grant select on Guset to manager
+                *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+██> Grant manager  to  muser;
+
+Grant succeeded.
+
+██> Grant manager  to muser, uuser2 ;
+
+Grant succeeded.
+
+██> 
+██> spool off
+
+██> SELECT * FROM USER_TAB_PRIVS ;
+
+██> SELECT grantee, table_name, grantor, privilege FROM USER_TAB_PRIVS_MADE; 
+
+██> SELECT owner, table_name, grantor, privilege FROM USER_TAB_PRIVS_RECD; 
+
+
